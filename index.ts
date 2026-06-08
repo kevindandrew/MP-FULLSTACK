@@ -17,7 +17,7 @@ let banner = `
 `;
 console.log(banner);
 
-let tareas: string[] = [];
+let tareas: task[] = [];
 let mensaje: string = `
 ==================================
 opciones del sistema
@@ -27,26 +27,61 @@ opciones del sistema
 4:salir
 ==================================
 `;
+interface task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
 let answer = "";
+let idContador = 1;
+
+const addTask = (title: string) => {
+  let completed: boolean = false;
+  let id: number = idContador;
+  idContador++;
+  let tareaAgregada: task = {
+    id,
+    title,
+    completed,
+  };
+  tareas.push(tareaAgregada);
+};
+
+const removeTask = () => {
+  if (tareas.length > 0) {
+    console.log(tareas.pop());
+  } else {
+    console.log("no quedan tareas");
+  }
+};
+const listTasks = () => {
+  if (tareas.length > 0) {
+    let estado: string = "";
+    for (let index = 0; index < tareas.length; index++) {
+      if (tareas[index].completed) {
+        estado = "completed";
+      } else {
+        estado = "pending";
+      }
+      console.log(`[${tareas[index].id}] ${tareas[index].title} - ${estado}`);
+    }
+  } else {
+    console.log("no tenemos tareas disponibles");
+  }
+};
 do {
   answer = await rl.question(mensaje);
   switch (answer) {
     case "1":
-      let tareita: string = await rl.question("ingresa la nueva tarea");
-      tareas.push(tareita);
+      let title: string = await rl.question("ingresa el titulo de la tarea");
+      addTask(title);
       break;
     case "2":
-      if (tareas.length > 0) {
-        console.log(tareas.pop());
-      } else {
-        console.log("no quedan tareas");
-      }
-
+      removeTask();
       break;
     case "3":
-      for (let index = 0; index < tareas.length; index++) {
-        console.log(`la tarea ${tareas[index]} esta en la pocision ${index}`);
-      }
+      listTasks();
       break;
     case "4":
       console.log("Hasta luego");

@@ -24,7 +24,10 @@ opciones del sistema
 1:agregar tarea
 2:eliminar ultima tarea
 3:listar tareass
-4:salir
+4:completar una tarea
+5:ver tareas pendientes
+6:ver tareas completadas
+7:salir
 ==================================
 `;
 interface task {
@@ -33,6 +36,18 @@ interface task {
   completed: boolean;
 }
 
+const markCompleted = (id: number) => {
+  let found = tareas.find((tarea) => tarea.id === id);
+  found ? (found.completed = true) : console.log("el id no existe");
+};
+const filterPending = (): task[] => {
+  let tareasCompletadas = tareas.filter((t) => t.completed === false);
+  return tareasCompletadas;
+};
+const filterCompleted = (): task[] => {
+  let tareasIncompletas = tareas.filter((t) => t.completed === true);
+  return tareasIncompletas;
+};
 let answer = "";
 let idContador = 1;
 
@@ -57,15 +72,16 @@ const removeTask = () => {
 };
 const listTasks = () => {
   if (tareas.length > 0) {
-    let estado: string = "";
-    for (let index = 0; index < tareas.length; index++) {
-      if (tareas[index].completed) {
-        estado = "completed";
+    let Arreglo: string[] = tareas.map(({ id, title, completed }) => {
+      if (completed) {
+        return `[${id} - ${title} - completed]`;
       } else {
-        estado = "pending";
+        return `[${id} - ${title} - pending]`;
       }
-      console.log(`[${tareas[index].id}] ${tareas[index].title} - ${estado}`);
-    }
+    });
+    Arreglo.forEach((mensaje) => {
+      console.log(mensaje);
+    });
   } else {
     console.log("no tenemos tareas disponibles");
   }
@@ -84,11 +100,22 @@ do {
       listTasks();
       break;
     case "4":
+      listTasks();
+      let idTarea: number = await rl.question("ingresa el id de la tarea");
+      markCompleted(idTarea);
+      break;
+    case "5":
+      console.log(filterPending());
+      break;
+    case "6":
+      console.log(filterCompleted());
+      break;
+    case "7":
       console.log("Hasta luego");
       break;
     default:
       console.log("ingresa una opcion valida");
   }
-} while (answer !== "4");
+} while (answer !== "7");
 
 rl.close();

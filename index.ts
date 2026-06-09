@@ -16,4 +16,106 @@ let banner = `
 ==================================
 `;
 console.log(banner);
+
+let tareas: task[] = [];
+let mensaje: string = `
+==================================
+opciones del sistema
+1:agregar tarea
+2:eliminar ultima tarea
+3:listar tareass
+4:completar una tarea
+5:ver tareas pendientes
+6:ver tareas completadas
+7:salir
+==================================
+`;
+interface task {
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+const markCompleted = (id: number) => {
+  let found = tareas.find((tarea) => tarea.id === id);
+  found ? (found.completed = true) : console.log("el id no existe");
+};
+const filterPending = (): task[] => {
+  let tareasCompletadas = tareas.filter((t) => t.completed === false);
+  return tareasCompletadas;
+};
+const filterCompleted = (): task[] => {
+  let tareasIncompletas = tareas.filter((t) => t.completed === true);
+  return tareasIncompletas;
+};
+let answer = "";
+let idContador = 1;
+
+const addTask = (title: string) => {
+  let completed: boolean = false;
+  let id: number = idContador;
+  idContador++;
+  let tareaAgregada: task = {
+    id,
+    title,
+    completed,
+  };
+  tareas.push(tareaAgregada);
+};
+
+const removeTask = () => {
+  if (tareas.length > 0) {
+    console.log(tareas.pop());
+  } else {
+    console.log("no quedan tareas");
+  }
+};
+const listTasks = () => {
+  if (tareas.length > 0) {
+    let Arreglo: string[] = tareas.map(({ id, title, completed }) => {
+      if (completed) {
+        return `[${id} - ${title} - completed]`;
+      } else {
+        return `[${id} - ${title} - pending]`;
+      }
+    });
+    Arreglo.forEach((mensaje) => {
+      console.log(mensaje);
+    });
+  } else {
+    console.log("no tenemos tareas disponibles");
+  }
+};
+do {
+  answer = await rl.question(mensaje);
+  switch (answer) {
+    case "1":
+      let title: string = await rl.question("ingresa el titulo de la tarea");
+      addTask(title);
+      break;
+    case "2":
+      removeTask();
+      break;
+    case "3":
+      listTasks();
+      break;
+    case "4":
+      listTasks();
+      let idTarea: number = await rl.question("ingresa el id de la tarea");
+      markCompleted(idTarea);
+      break;
+    case "5":
+      console.log(filterPending());
+      break;
+    case "6":
+      console.log(filterCompleted());
+      break;
+    case "7":
+      console.log("Hasta luego");
+      break;
+    default:
+      console.log("ingresa una opcion valida");
+  }
+} while (answer !== "7");
+
 rl.close();

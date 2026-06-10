@@ -48,10 +48,17 @@ const filterCompleted = (): task[] => {
   let tareasIncompletas = tareas.filter((t) => t.completed === true);
   return tareasIncompletas;
 };
+const saveToDB = (t: task): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(`tarea ${t.title} Guardada con exito`);
+    }, 2000);
+  });
+};
 let answer = "";
 let idContador = 1;
 
-const addTask = (title: string) => {
+const addTask = async (title: string) => {
   let completed: boolean = false;
   let id: number = idContador;
   idContador++;
@@ -61,6 +68,8 @@ const addTask = (title: string) => {
     completed,
   };
   tareas.push(tareaAgregada);
+  const respuesta = await saveToDB(tareaAgregada);
+  console.log(respuesta);
 };
 
 const removeTask = () => {
@@ -91,7 +100,7 @@ do {
   switch (answer) {
     case "1":
       let title: string = await rl.question("ingresa el titulo de la tarea");
-      addTask(title);
+      await addTask(title);
       break;
     case "2":
       removeTask();
@@ -101,7 +110,8 @@ do {
       break;
     case "4":
       listTasks();
-      let idTarea: number = await rl.question("ingresa el id de la tarea");
+      let idTarea2: string = await rl.question("ingresa el id de la tarea");
+      let idTarea: number = parseInt(idTarea2);
       markCompleted(idTarea);
       break;
     case "5":
